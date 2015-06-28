@@ -6,7 +6,8 @@ var express = require('express'),
   app = express();
 
 nconf.argv().env();
-nconf.file("local", "./config.json");
+nconf.file("./config.json");
+nconf.file("servers", "./servers.json");
 nconf.load();
 
 var cacheTime = nconf.get("cacheTime") || 60000;
@@ -83,7 +84,10 @@ app.get('/:host', apicache(), function (req, res) {
     });
   });
   ftp.connect({
-    "host": host
+    "host": host,
+    "port": nconf.get("servers:" + host + ":port") || 21,
+    "user": nconf.get("servers:" + host + ":username") || "anonymous",
+    "password": nconf.get("servers:" + host + ":password") || ""
   });
 });
 
@@ -104,7 +108,10 @@ app.get('/:host/:file', apicache(), function (req, res) {
     });
   });
   ftp.connect({
-    "host": host
+    "host": host,
+    "port": nconf.get("servers:" + host + ":port") || 21,
+    "user": nconf.get("servers:" + host + ":username") || "anonymous",
+    "password": nconf.get("servers:" + host + ":password") || ""
   });
 });
 

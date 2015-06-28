@@ -1,0 +1,8 @@
+{
+  "ftp.ed.ac.uk": {
+    "username": "ftp",
+    "password": "",
+    "secure": false,
+    "port": 21
+  }
+}
