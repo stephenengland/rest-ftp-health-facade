@@ -1,7 +1,7 @@
 # rest-ftp-health-fascade
 A REST endpoint to check on FTP servers. 
 
-HTTP gets that return a status code and some details for use in a HealthCheck Endpoint UI application (to be covered later).
+HTTP GET actions that return a status code and some details for use in a HealthCheck Endpoint UI application (to be covered later).
 
 ## Interface
 
@@ -51,4 +51,19 @@ Edit the servers.json file to add your FTP options. (user, password, ssl)
     "port": 21
   }
 }
+```
+
+## Contributing
+
+Please make sure and run the REST api tests:
+
+```
+  npm start
+```
+
+And in another console window:
+
+```
+npm install -g jasmine-node
+npm test
 ```
