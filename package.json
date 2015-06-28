@@ -4,7 +4,7 @@
   "description": "A REST endpoint to perform health checks on FTP servers",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jasmine-node ./tests/spec.js -m .*",
     "start": "node index.js"
   },
   "repository": {
@@ -22,5 +22,9 @@
     "express": "^4.13.0",
     "ftp": "^0.3.10",
     "nconf": "^0.7.1"
+  },
+  "devDependencies": {
+    "frisby": "^0.8.5",
+    "jasmine-node": "^1.14.5"
   }
 }

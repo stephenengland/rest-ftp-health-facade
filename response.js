@@ -13,7 +13,7 @@ module.exports = {
   "ftpError": function (err, res) {
     if (res.hasEnded) { return; }
 
-    res.status(502).send({
+    res.status(502).json({
       "errorMessage": err
     });
 
@@ -22,13 +22,13 @@ module.exports = {
   },
   "healthyResponse": function (data, res) {
     res.status(200);
-    res.send(data);
+    res.json(data);
     res.hasEnded = true;
     res.end();
   },
   "ftpStatusResponse": function (err, data, res, path) {
     if (err) {
-      ftpError(err, res);
+      this.ftpError(err, res);
     }
     else {
       this.healthyResponse({
@@ -43,7 +43,7 @@ module.exports = {
   },
   "ftpListResponse": function (err, data, res, path) {
     if (err || !data || !data.length) {
-      ftpError(err, res);
+      this.ftpError(err, res);
     }
     else {
       var responseData = {

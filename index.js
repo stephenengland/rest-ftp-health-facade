@@ -34,7 +34,7 @@ app.get('/info/:host', function (req, res) {
   }
   var port = server.address().port;
 
-  res.send({
+  res.json({
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
     "ftpHost": req.params.host,
     "serverHost": host,
@@ -54,7 +54,7 @@ app.get('/info/:host/:file', function (req, res) {
   }
   var port = server.address().port;
 
-  res.send({
+  res.json({
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
     "ftpHost": req.params.host,
     "ftpPath": "/" + ( req.params.file || ""),
