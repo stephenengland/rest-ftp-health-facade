@@ -32,4 +32,23 @@ npm install
 npm start
 ```
 
+## Configuration
+Edit the config.json file to edit the REST server's port and cache duration
+```
+{
+  "port": 9090,
+  "cacheTime": 30000
+}
+```
+
 Edit the servers.json file to add your FTP options. (user, password, ssl)
+```
+{
+  "ftp.ed.ac.uk": {
+    "username": "ftp",
+    "password": "",
+    "secure": false,
+    "port": 21
+  }
+}
+```
