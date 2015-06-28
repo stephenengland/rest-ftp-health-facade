@@ -1,5 +1,7 @@
 # rest-ftp-health-fascade
-A REST endpoint to check on FTP servers
+A REST endpoint to check on FTP servers. 
+
+HTTP gets that return a status code and some details for use in a HealthCheck Endpoint UI application (to be covered later).
 
 ## Interface
 
