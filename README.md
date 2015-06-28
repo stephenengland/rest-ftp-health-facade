@@ -27,8 +27,9 @@ Examples:
 ## Setup
 
 ```
-npm install -g rest-ftp-health-fascade
-rest-ftp-health-fascade
+git clone this repo.
+npm install
+npm start
 ```
 
 Edit the servers.json file to add your FTP options. (user, password, ssl)
