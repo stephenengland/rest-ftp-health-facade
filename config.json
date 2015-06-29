@@ -1,4 +1,6 @@
 {
   "port": 9090,
-  "cacheTime": 30000
+  "cacheTime": 30000,
+  "serviceName": "REST FTP HealthCheck",
+  "serviceDescription": "A REST endpoint to perform health checks on FTP servers."
 }

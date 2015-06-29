@@ -1,13 +1,14 @@
 var express = require('express'),
   nconf = require('nconf'),
   FtpClient = require('ftp'),
+  path = require('path'),
   response = require('./response'),
   apicache = require('apicache'),
   app = express();
 
 nconf.argv().env();
-nconf.file("./config.json");
-nconf.file("servers", "./servers.json");
+nconf.file(path.join(__dirname, "config.json"));
+nconf.file("servers", path.join(__dirname, "servers.json"));
 nconf.load();
 
 var cacheTime = nconf.get("cacheTime") || 60000;

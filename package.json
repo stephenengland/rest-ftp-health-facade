@@ -21,7 +21,9 @@
     "apicache": "0.0.12",
     "express": "^4.13.0",
     "ftp": "^0.3.10",
-    "nconf": "^0.7.1"
+    "nconf": "^0.7.1",
+    "node-windows": "^0.1.7",
+    "path": "^0.11.14"
   },
   "devDependencies": {
     "frisby": "^0.8.5",

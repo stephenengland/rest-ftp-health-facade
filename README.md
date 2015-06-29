@@ -32,6 +32,15 @@ npm install
 npm start
 ```
 
+### Install as a Windows Service
+`node ./windows-service --install`
+### Other Windows Service operations
+```
+node ./windows-service --uninstall
+node ./windows-service --start
+node ./windows-service --stop
+```
+
 ## Configuration
 Edit the config.json file to edit the REST server's port and cache duration
 ```
