@@ -1,5 +1,5 @@
 {
-  "name": "rest-ftp-health-fascade",
+  "name": "rest-ftp-health-facade",
   "version": "1.0.0",
   "description": "A REST endpoint to perform health checks on FTP servers",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thealah/rest-ftp-health-fascade.git"
+    "url": "git+https://github.com/thealah/rest-ftp-health-facade.git"
   },
   "author": "Stephen England",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/thealah/rest-ftp-health-fascade/issues"
+    "url": "https://github.com/thealah/rest-ftp-health-facade/issues"
   },
-  "homepage": "https://github.com/thealah/rest-ftp-health-fascade#readme",
+  "homepage": "https://github.com/thealah/rest-ftp-health-facade#readme",
   "dependencies": {
     "apicache": "0.0.12",
     "express": "^4.13.0",

@@ -27,7 +27,7 @@ Examples:
 ## Setup
 
 ```
-git clone https://github.com/thealah/rest-ftp-health-fascade.git
+git clone https://github.com/thealah/rest-ftp-health-facade.git
 npm install
 npm start
 ```
