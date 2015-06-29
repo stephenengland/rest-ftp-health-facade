@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>FTP REST Health Endpoint Facade</id>
+    <version>1.0.0</version>
+    <authors>Stephen England</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A REST endpoint to perform health checks on FTP servers</description>
+  </metadata>
+  <files>
+    <file src="response.js" target="dist" />
+    <file src="index.js" target="dist"  />
+    <file src="windows-service.js" target="dist"  />
+    <file src="node_modules\**" target="dist\node_modules"  />
+    <file src="package.json" target="dist"  />
+  </files>
+</package>
