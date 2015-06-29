@@ -8,10 +8,11 @@
     <description>A REST endpoint to perform health checks on FTP servers</description>
   </metadata>
   <files>
-    <file src="response.js" target="dist" />
-    <file src="index.js" target="dist"  />
-    <file src="windows-service.js" target="dist"  />
-    <file src="node_modules\**" target="dist\node_modules"  />
-    <file src="package.json" target="dist"  />
+    <file src="response.js" target="." />
+    <file src="index.js" target="."  />
+    <file src="windows-service.js" target="."  />
+    <file src="node_modules\**" target="node_modules"  />
+    <file src="package.json" target="."  />
+    <file src="Deploy.ps1" target="."  />
   </files>
 </package>
