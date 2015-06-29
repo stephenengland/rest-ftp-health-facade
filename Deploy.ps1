@@ -1,2 +1,2 @@
-node ./windows-service.js --uninstall
-node ./windows-service.js --install
+"C:\Program Files\nodejs\node.exe" ./windows-service.js --uninstall
+"C:\Program Files\nodejs\node.exe" ./windows-service.js --install
