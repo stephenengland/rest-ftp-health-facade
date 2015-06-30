@@ -21,6 +21,7 @@ apicache = apicache.options({
 var createFtpClient = function (res) {
   var ftp = new FtpClient();
   ftp.on("error", function (err) {
+    console.log(err);
     response.ftpError(err, res);
     ftp.end();
   });
@@ -88,7 +89,8 @@ app.get('/:host', apicache(), function (req, res) {
     "host": host,
     "port": nconf.get("servers:" + host + ":port") || 21,
     "user": nconf.get("servers:" + host + ":username") || "anonymous",
-    "password": nconf.get("servers:" + host + ":password") || ""
+    "password": nconf.get("servers:" + host + ":password") || "",
+    "secure": nconf.get("secure") || false
   });
 });
 
@@ -112,7 +114,8 @@ app.get('/:host/:file', apicache(), function (req, res) {
     "host": host,
     "port": nconf.get("servers:" + host + ":port") || 21,
     "user": nconf.get("servers:" + host + ":username") || "anonymous",
-    "password": nconf.get("servers:" + host + ":password") || ""
+    "password": nconf.get("servers:" + host + ":password") || "",
+    "secure": nconf.get("secure") || false
   });
 });
 
