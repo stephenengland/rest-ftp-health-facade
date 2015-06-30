@@ -10,10 +10,11 @@ module.exports = {
 
     return "FTP Directory";
   },
-  "ftpError": function (err, res) {
+  "ftpError": function (err, res, host) {
     if (res.hasEnded) { return; }
 
     res.status(502).jsonp({
+      "host": host,
       "errorMessage": err
     });
 
@@ -26,7 +27,7 @@ module.exports = {
     res.hasEnded = true;
     res.end();
   },
-  "ftpStatusResponse": function (err, data, res, path) {
+  "ftpStatusResponse": function (err, data, res, path, host) {
     if (err) {
       this.ftpError(err, res);
     }
@@ -34,6 +35,7 @@ module.exports = {
       this.healthyResponse({
         "statusMessage": data,
         "type": this.getResponseType(true),
+        "host": host,
         "ui": {
           "hide": ['statusMessage'],
           "info": "/info" + path
@@ -41,7 +43,7 @@ module.exports = {
       }, res);
     }
   },
-  "ftpListResponse": function (err, data, res, path) {
+  "ftpListResponse": function (err, data, res, path, host) {
     if (err || !data || !data.length) {
       this.ftpError(err, res);
     }
@@ -49,6 +51,7 @@ module.exports = {
       var responseData = {
         "numberOfFiles": data.length,
         "type": this.getResponseType(false, data.length),
+        "host": host,
         "ui": {
           "info": "/info" + path
         }

@@ -2,6 +2,7 @@ var express = require('express'),
   nconf = require('nconf'),
   FtpClient = require('ftp'),
   path = require('path'),
+  os = require("os"),
   response = require('./response'),
   apicache = require('apicache'),
   app = express();
@@ -11,6 +12,8 @@ nconf.file(path.join(__dirname, "config.json"));
 nconf.file("servers", path.join(__dirname, "servers.json"));
 nconf.load();
 
+var hostname = os.hostname();
+
 var cacheTime = nconf.get("cacheTime") || 60000;
 apicache = apicache.options({
   "debug": false,
@@ -18,11 +21,11 @@ apicache = apicache.options({
   "enable": (cacheTime > 0)
 }).middleware;
 
-var createFtpClient = function (res) {
+var createFtpClient = function (res, host) {
   var ftp = new FtpClient();
   ftp.on("error", function (err) {
     console.log(err);
-    response.ftpError(err, res);
+    response.ftpError(err, res, host);
     ftp.end();
   });
 
@@ -30,19 +33,15 @@ var createFtpClient = function (res) {
 };
 
 app.get('/info/:host', function (req, res) {
-  var host = server.address().address;
-  if (host === '::') {
-    host = "localhost";
-  }
   var port = server.address().port;
 
   res.jsonp({
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
-    "ftpHost": req.params.host,
-    "serverHost": host,
-    "serverPort": port,
+    "host": req.params.host,
+    "healthCheckHost": hostname,
+    "healthCheckPort": port,
     "ui": {
-      "hide": ["serverHost", "serverPort"]
+      "hide": ["healthCheckHost", "healthCheckPort"]
     }
   });
   res.hasEnded = true;
@@ -50,20 +49,16 @@ app.get('/info/:host', function (req, res) {
 });
 
 app.get('/info/:host/:file', function (req, res) {
-  var host = server.address().address;
-  if (host === '::') {
-    host = "localhost";
-  }
   var port = server.address().port;
 
   res.jsonp({
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
-    "ftpHost": req.params.host,
+    "host": req.params.host,
     "ftpPath": "/" + ( req.params.file || ""),
-    "serverHost": host,
-    "serverPort": port,
+    "healthCheckHost": hostname,
+    "healthCheckPort": port,
     "ui": {
-      "hide": ["serverHost", "serverPort"]
+      "hide": ["healthCheckHost", "healthCheckPort"]
     }
   });
   res.hasEnded = true;
@@ -73,15 +68,15 @@ app.get('/info/:host/:file', function (req, res) {
 app.get('/:host', apicache(), function (req, res) {
   var host = req.params.host;
   if (!host) {
-    response.badRequest(res, "Invalid hostname");
+    response.badRequest(res, "Invalid hostname", host);
     return;
   }
 
   var path = "/" + host;
-  var ftp = createFtpClient(res);
+  var ftp = createFtpClient(res, host);
   ftp.on("ready", function () {
     ftp.status(function(err, status){
-      response.ftpStatusResponse(err, status, res, path);
+      response.ftpStatusResponse(err, status, res, path, host);
       ftp.end();
     });
   });
@@ -100,15 +95,15 @@ app.get('/:host/:file', apicache(), function (req, res) {
   var host = req.params.host;
   var file = req.params.file;
   if (!host || !file) {
-    response.badRequest(res, "Invalid host or filepath");
+    response.badRequest(res, "Invalid host or filepath", host);
     return;
   }
   
   var path = "/" + host + "/" + file;
-  var ftp = createFtpClient(res);
+  var ftp = createFtpClient(res, host);
   ftp.on("ready", function () {
     ftp.list(file, function(err, list){
-      response.ftpListResponse(err, list, res, path);
+      response.ftpListResponse(err, list, res, path, host);
       ftp.end();
     });
   });
@@ -123,11 +118,7 @@ app.get('/:host/:file', apicache(), function (req, res) {
 });
 
 var server = app.listen(nconf.get('port') || 3000, function () {
-  var host = server.address().address;
-  if (host === '::') {
-    host = "localhost";
-  }
   var port = server.address().port;
 
-  console.log('FTP HealthCheck REST API listening at http://%s:%s', host, port);
+  console.log('FTP HealthCheck REST API listening on port %s', port);
 });
