@@ -103,7 +103,7 @@ app.get('/:host/:file', apicache(), function (req, res) {
     response.badRequest(res, "Invalid host or filepath");
     return;
   }
-  console.log("Checking File");
+  
   var path = "/" + host + "/" + file;
   var ftp = createFtpClient(res);
   ftp.on("ready", function () {
