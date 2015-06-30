@@ -85,12 +85,14 @@ app.get('/:host', apicache(), function (req, res) {
       ftp.end();
     });
   });
+
+  var hostCredentials = nconf.get(host);
   ftp.connect({
     "host": host,
-    "port": nconf.get("servers:" + host + ":port") || 21,
-    "user": nconf.get("servers:" + host + ":username") || "anonymous",
-    "password": nconf.get("servers:" + host + ":password") || "",
-    "secure": nconf.get("secure") || false
+    "port": (hostCredentials && hostCredentials.port) || 21,
+    "user": (hostCredentials && hostCredentials.username) || "anonymous",
+    "password":  (hostCredentials && hostCredentials.password) || "",
+    "secure":  (hostCredentials && hostCredentials.server) || false
   });
 });
 
@@ -110,12 +112,13 @@ app.get('/:host/:file', apicache(), function (req, res) {
       ftp.end();
     });
   });
+  var hostCredentials = nconf.get(host);
   ftp.connect({
     "host": host,
-    "port": nconf.get("servers:" + host + ":port") || 21,
-    "user": nconf.get("servers:" + host + ":username") || "anonymous",
-    "password": nconf.get("servers:" + host + ":password") || "",
-    "secure": nconf.get("secure") || false
+    "port": (hostCredentials && hostCredentials.port) || 21,
+    "user": (hostCredentials && hostCredentials.username) || "anonymous",
+    "password":  (hostCredentials && hostCredentials.password) || "",
+    "secure":  (hostCredentials && hostCredentials.server) || false
   });
 });
 
