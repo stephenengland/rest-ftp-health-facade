@@ -13,7 +13,7 @@ module.exports = {
   "ftpError": function (err, res) {
     if (res.hasEnded) { return; }
 
-    res.status(502).json({
+    res.status(502).jsonp({
       "errorMessage": err
     });
 
@@ -22,7 +22,7 @@ module.exports = {
   },
   "healthyResponse": function (data, res) {
     res.status(200);
-    res.json(data);
+    res.jsonp(data);
     res.hasEnded = true;
     res.end();
   },
