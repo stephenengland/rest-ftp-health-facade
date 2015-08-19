@@ -32,58 +32,36 @@ var createFtpClient = function (res, host, path) {
   return ftp;
 };
 
-app.get('/info/:host', function (req, res) {
+app.get('/info/:host/:fileOrFolder?', function (req, res) {
   var port = server.address().port;
+  var fileOrFolder = req.params.fileOrFolder;
   var file = req.query.file; // For files at the root of the FTP
 
-  if (file) {
-    res.jsonp({
-      "description": "FTP HealthCheck Monitor that checks a FTP server or file",
-      "host": req.params.host,
-      "ftpPath": "/" + file,
-      "healthCheckHost": hostname,
-      "healthCheckPort": port,
-      "ui": {
-        "hide": ["healthCheckHost", "healthCheckPort"]
-      }
-    });
-  }
-  else {
-    res.jsonp({
-      "description": "FTP HealthCheck Monitor that checks a FTP server or file",
-      "host": req.params.host,
-      "healthCheckHost": hostname,
-      "healthCheckPort": port,
-      "ui": {
-        "hide": ["healthCheckHost", "healthCheckPort"]
-      }
-    });
-  }
-  res.hasEnded = true;
-  res.end();
-});
-
-app.get('/info/:host/:file', function (req, res) {
-  var port = server.address().port;
-
-  res.jsonp({
+  var response = {
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
     "host": req.params.host,
-    "ftpPath": "/" + ( req.params.file || ""),
     "healthCheckHost": hostname,
     "healthCheckPort": port,
     "ui": {
       "hide": ["healthCheckHost", "healthCheckPort"]
     }
-  });
+  };
+  if (file || fileOrFolder) {
+    response.ftpPath = "/" + (fileOrFolder || "") + (file || "");
+  }
+  res.jsonp(response);
   res.hasEnded = true;
   res.end();
 });
 
-app.get('/history/:host', function (req, res) {
+app.get('/history/:host/:fileOrFolder?', function (req, res) {
   var host = req.params.host;
+  var fileOrFolder = req.params.fileOrFolder;
   var file = req.query.file; // For files at the root of the FTP
   var path = "/" + host;
+  if (fileOrFolder) {
+    path += "/" + fileOrFolder;
+  }
   if (file) {
     path += "/?file=" + file;
   }
@@ -91,21 +69,9 @@ app.get('/history/:host', function (req, res) {
   res.end();
 });
 
-app.get('/history/:host/:file', function (req, res) {
+app.get('/:host/:folder?', apicache(), function (req, res) {
   var host = req.params.host;
-  var file = req.params.file;
-  if (!host || !file) {
-    response.badRequest(res, "Invalid host or filepath", host);
-    return;
-  }
-  
-  var path = "/" + host + "/" + file;
-  res.jsonp(ftpHistory.getRecentStatus(path));
-  res.end();
-});
-
-app.get('/:host', apicache(), function (req, res) {
-  var host = req.params.host;
+  var fileOrFolder = req.params.folder;
   var file = req.query.file; // For files at the root of the FTP
   if (!host) {
     response.badRequest(res, "Invalid hostname", host);
@@ -113,13 +79,22 @@ app.get('/:host', apicache(), function (req, res) {
   }
 
   var path = "/" + host;
+  var ftpPath = "";
+  if (fileOrFolder) {
+    path += "/" + fileOrFolder;
+    ftpPath += fileOrFolder;
+  }
   if (file) {
     path += "/?file=" + file;
+    if (fileOrFolder) {
+      ftpPath += "/";
+    }
+    ftpPath += file;
   }
   var ftp = createFtpClient(res, host, path);
   ftp.on("ready", function () {
-    if (file) {
-      ftp.list("/" + file, function (err, list) {
+    if (file || fileOrFolder) {
+      ftp.list(ftpPath, function (err, list) {
         response.ftpListResponse(err, list, res, path, host);
         ftp.end();
       });
@@ -132,33 +107,6 @@ app.get('/:host', apicache(), function (req, res) {
     }
   });
 
-  var hostCredentials = nconf.get(host);
-  ftp.connect({
-    "host": host,
-    "port": (hostCredentials && hostCredentials.port) || 21,
-    "user": (hostCredentials && hostCredentials.username) || "anonymous",
-    "password":  (hostCredentials && hostCredentials.password) || "",
-    "secure":  (hostCredentials && hostCredentials.server) || false
-  });
-});
-
-app.get('/:host/:folder', apicache(), function (req, res) {
-  var host = req.params.host;
-  var fileOrFolder = req.params.folder;
-  if (!host || !fileOrFolder) {
-    response.badRequest(res, "Invalid host or filepath", host);
-    return;
-  }
-  
-  var path = "/" + host  + "/" + fileOrFolder;
-
-  var ftp = createFtpClient(res, host, path);
-  ftp.on("ready", function () {
-    ftp.list(fileOrFolder, function (err, list) {
-      response.ftpListResponse(err, list, res, path, host);
-      ftp.end();
-    });
-  });
   var hostCredentials = nconf.get(host);
   ftp.connect({
     "host": host,
