@@ -33,13 +33,22 @@ var createFtpClient = function (res, host, path) {
 };
 
 app.get('/info/:host/:fileOrFolder?', function (req, res) {
+  var host = req.params.host;
   var port = server.address().port;
   var fileOrFolder = req.params.fileOrFolder;
   var file = req.query.file; // For files at the root of the FTP
 
+  var path = "/" + host;
+  if (fileOrFolder) {
+    path += "/" + fileOrFolder;
+  }
+  if (file) {
+    path += "/?file=" + file;
+  }
+
   var response = {
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
-    "host": req.params.host,
+    "host": host,
     "healthCheckHost": hostname,
     "healthCheckPort": port,
     "ui": {
@@ -49,23 +58,10 @@ app.get('/info/:host/:fileOrFolder?', function (req, res) {
   if (file || fileOrFolder) {
     response.ftpPath = "/" + (fileOrFolder || "") + (file || "");
   }
+  response.history = ftpHistory.getRecentStatus(path);
+
   res.jsonp(response);
   res.hasEnded = true;
-  res.end();
-});
-
-app.get('/history/:host/:fileOrFolder?', function (req, res) {
-  var host = req.params.host;
-  var fileOrFolder = req.params.fileOrFolder;
-  var file = req.query.file; // For files at the root of the FTP
-  var path = "/" + host;
-  if (fileOrFolder) {
-    path += "/" + fileOrFolder;
-  }
-  if (file) {
-    path += "/?file=" + file;
-  }
-  res.jsonp(ftpHistory.getRecentStatus(path));
   res.end();
 });
 
@@ -73,7 +69,7 @@ app.get('/:host/:folder?', apicache(), function (req, res) {
   var host = req.params.host;
   var fileOrFolder = req.params.folder;
   var file = req.query.file; // For files at the root of the FTP
-  if (!host) {
+  if (!host || host === 'favicon.ico' || host === 'undefined') {
     response.badRequest(res, "Invalid hostname", host);
     return;
   }
@@ -86,11 +82,9 @@ app.get('/:host/:folder?', apicache(), function (req, res) {
   }
   if (file) {
     path += "/?file=" + file;
-    if (fileOrFolder) {
-      ftpPath += "/";
-    }
-    ftpPath += file;
+    ftpPath += "/" +file;
   }
+  
   var ftp = createFtpClient(res, host, path);
   ftp.on("ready", function () {
     if (file || fileOrFolder) {

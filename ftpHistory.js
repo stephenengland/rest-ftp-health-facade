@@ -26,7 +26,8 @@ var pushToHistory = function (uri, status) {
 		history[uri] = [{
 			'status': status,
 			'sinceDate': new Date(),
-			'lastChecked': new Date()
+			'lastChecked': new Date(),
+			'timesChecked': 1
 		}];
 		changed = true;
 	}
@@ -42,13 +43,15 @@ var pushToHistory = function (uri, status) {
 			currentItems.push({
 				'status': status,
 				'sinceDate': new Date(),
-				'lastChecked': new Date()
+				'lastChecked': new Date(),
+				'timesChecked': 1
 			});
 			history[uri] = currentItems;
 			changed = true;
 		}
 		else {
 			currentItems[currentItems.length - 1].lastChecked = new Date();
+			currentItems[currentItems.length - 1].timesChecked++;
 		}
 	}
 
@@ -65,7 +68,9 @@ store.load("history", function (err, loadedHistory) {
 
 module.exports = {
 	"processFtpResponse": function (uri, status) {
-		pushToHistory(uri, status);
+		if (uri) {
+			pushToHistory(uri, status);
+		}
 	},
 	"getRecentStatus": function (uri) {
 		if (!history.hasOwnProperty(uri) || history[uri].length === 0) {

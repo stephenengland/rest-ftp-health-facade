@@ -21,7 +21,7 @@ frisby.create('Get FTP Server Status')
 
 frisby.create('Get FTP Server Status - Bad Host Name')
   .get('http://localhost:' + nconf.get('port') + '/ftp.axcvzwererzersdfawerze.com')
-  .expectStatus(500)
+  .expectStatus(502)
   //.inspectJSON()
 .toss();
 
