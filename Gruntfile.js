@@ -2,16 +2,17 @@
 var path = require('path');
 
 module.exports = function(grunt) {
-  grunt.loadNpmTasks('grunt-express-server');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-jasmine-node');
-  grunt.loadNpmTasks('grunt-run');
-
   grunt.initConfig({
     express: {
       ftpRest: {
         options: {
-          script: path.resolve(__dirname, './index.js')
+          script: path.join(__dirname, 'index.js')
+        }
+      },
+      ftpRestKeepAlive: {
+        options: {
+          script: path.join(__dirname, 'index.js'),
+          background: false
         }
       }
     },
@@ -26,18 +27,25 @@ module.exports = function(grunt) {
         src: ['*.js', 'tests/**.js']
       }
     },
-    jasmine_node: {
-      options: {
-        match: ".",
-        matchall: true,
-        extensions: "js",
-        specNameMatcher: "spec"
-      },
-      all: ['./tests/spec.js']
+    run: {
+      localTests: {
+        cmd: 'jasmine-node',
+        args: [ 'tests/ftptests_spec.js' ]
+      }
+    },
+    availabletasks: { 
+      tasks: {
+        options: {
+          filter: 'exclude',
+          tasks: ['availabletasks']
+        }
+      }
     }
   });
 
-  grunt.registerTask('server', ['jshint', 'express:ftpRest', 'jasmine_node']);
-  grunt.registerTask('test', ['jshint', 'jasmine_node']);
-  grunt.registerTask('default', [ 'server' ]);
+  require('load-grunt-tasks')(grunt);
+
+  grunt.registerTask('runAndTest', ['jshint', 'express:ftpRest', 'run:localTests']);
+  grunt.registerTask('test', ['jshint', 'run:localTests']);
+  grunt.registerTask('default', ['jshint', 'express:ftpRestKeepAlive']);
 };
