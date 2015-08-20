@@ -38,6 +38,12 @@ app.get('/info/:host/:fileOrFolder?', function (req, res) {
   var fileOrFolder = req.params.fileOrFolder;
   var file = req.query.file; // For files at the root of the FTP
 
+  var hostCredentials = nconf.get(host);
+  if (!host || host === 'favicon.ico' || host === 'undefined' || !hostCredentials) {
+    response.badRequest(res, "Invalid hostname", host);
+    return;
+  }
+
   var path = "/" + host;
   if (fileOrFolder) {
     path += "/" + fileOrFolder;
@@ -46,21 +52,28 @@ app.get('/info/:host/:fileOrFolder?', function (req, res) {
     path += "/?file=" + file;
   }
 
-  var response = {
+  var history = ftpHistory.getRecentStatus(path);
+  var lastCheckedOn = history && history.length > 0 && history[0].lastChecked;
+
+  var data = {
     "description": "FTP HealthCheck Monitor that checks a FTP server or file",
     "host": host,
     "healthCheckHost": hostname,
     "healthCheckPort": port,
+    "history": history,
+    "lastCheckedOn": lastCheckedOn,
+    "ftpUsername": hostCredentials.username,
+    "ftpPort": hostCredentials.port,
+    "sftp": hostCredentials.secure,
     "ui": {
-      "hide": ["healthCheckHost", "healthCheckPort"]
+      "hide": ["healthCheckHost", "healthCheckPort", "history"]
     }
   };
   if (file || fileOrFolder) {
-    response.ftpPath = "/" + (fileOrFolder || "") + (file || "");
+    data.ftpPath = "/" + (fileOrFolder || "") + (file || "");
   }
-  response.history = ftpHistory.getRecentStatus(path);
 
-  res.jsonp(response);
+  res.jsonp(data);
   res.hasEnded = true;
   res.end();
 });
