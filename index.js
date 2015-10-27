@@ -120,7 +120,9 @@ app.get('/:host/:folder?', apicache(), function (req, res) {
     "port": (hostCredentials && hostCredentials.port) || 21,
     "user": (hostCredentials && hostCredentials.username) || "anonymous",
     "password":  (hostCredentials && hostCredentials.password) || "",
-    "secure":  (hostCredentials && hostCredentials.server) || false
+    "secure":  (hostCredentials && hostCredentials.server) || false,
+    "connTimeout": (hostCredentials && hostCredentials.connTimeout) || 10000,
+    "pasvTimeout": (hostCredentials && hostCredentials.pasvTimeout) || 10000
   });
 });
 

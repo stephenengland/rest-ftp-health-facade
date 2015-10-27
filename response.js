@@ -79,6 +79,6 @@ module.exports = {
   "badRequest": function (res, reason) {
     reason = "The data you sent was invalid. " + (reason || "");
     res.hasEnded = true;
-    res.status(500).send(reason).end();
+    res.status(400).send(reason).end();
   }
 };
